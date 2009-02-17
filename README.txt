@@ -3,6 +3,8 @@ README
 
 Created and copyrighted by Matthew Gardner
 
+//TODO:  Fix this with the updates...
+
 Feel free to use this program however you wish, but I ask that you do not
 distribute it unless granted permission by me.
 
