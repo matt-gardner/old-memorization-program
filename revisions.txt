@@ -3,76 +3,124 @@ Created by Matthew Gardner
 Created June 2007
 Last Modified 2/15/2009
 
-The main part of a program for memorizing words.  This program requires a driver with a main method, but 
-only to instantiate it and call the start() method.  I considered making the different frames separate 
-classes to make the file smaller and easier to read, but that would be too much hassle if I could get it to 
-work at all, because the frames depend on each other - you need to access the class variables from almost all 
-of the frames.  I suppose I could do it with inheritance, but that's more trouble than it's worth.
-The program keeps track of cards entered by reading and writing text files that are stored in a folder 
-called memorizingfiles.  The folders memorizingfiles and memorizingpictures need to be in the same 
-folder as the memorizing folder. 
+The main part of a program for memorizing words.  This program requires a
+driver with a main method, but only to instantiate it and call the start()
+method.  I considered making the different frames separate classes to make the
+file smaller and easier to read, but that would be too much hassle if I could
+get it to work at all, because the frames depend on each other - you need to
+access the class variables from almost all of the frames.  I suppose I could do
+it with inheritance, but that's more trouble than it's worth.  The program
+keeps track of cards entered by reading and writing text files that are stored
+in a folder called memorizingfiles.  The folders memorizingfiles and
+memorizingpictures need to be in the same folder as the memorizing folder. 
 
 See modification notes in revisions.txt.
 
 Most Recent Modifications:
-2/16/2009 - I put all of this into an internet-facing git repository that can be cloned with this command:
+
+2/17/2009 - I made a few more classes to make the code more cohesive and
+readable.
+
+2/16/2009 - I put all of this into an internet-facing git repository that can
+be cloned with this command:
+
 git clone git://aml.cs.byu.edu/mjg82/memorizing.git
-2/15/2009 - Made enormous changes to the code, greatly simplifying the logic now that I'm using array
-lists instead of my own list.  I keep a couple of lists around, and a pointer to the current one (cardList).
-The different methods in the review panel listener change which list cardList points to, and everything
-just goes off of card list.  It's a lot nicer than it was.  And I show now which word you're on out of
-the total number of words - that's a handy feature, I thought.  And previous word now also works.
-2/15/2009 - Added a label telling you how many words you are currently reviewing in the review window.
-2/12/2009 - I decided that it was foolish to have written my own list instead of using Java's.  It would
-be much easier, and I could do more, if I just used an ArrayList.  So, I started switching the code over.
-It seems to work with an array list at the moment, but there's a lot of code simplification I can do now
+
+2/15/2009 - Made enormous changes to the code, greatly simplifying the logic
+now that I'm using array lists instead of my own list.  I keep a couple of
+lists around, and a pointer to the current one (cardList).  The different
+methods in the review panel listener change which list cardList points to, and
+everything just goes off of cardList.  It's a lot nicer than it was.  And I
+show now which word you're on out of the total number of words - that's a handy
+feature, I thought.  And previous word now also works.
+
+2/15/2009 - Added a label telling you how many words you are currently
+reviewing in the review window.
+
+2/12/2009 - I decided that it was foolish to have written my own list instead
+of using Java's.  It would be much easier, and I could do more, if I just used
+an ArrayList.  So, I started switching the code over.  It seems to work with an
+array list at the moment, but there's a lot of code simplification I can do now
 that I've switched it that I have yet to do.  
-2/1/2009 - I found a bug when the program was left open over several days.  It didn't handle the dates
-right, as I only set the date when the program opened.  So I fixed that, making it reset the date all
-over the place.
-6/27/2008 - I discovered that different fonts could be used through the right html tags, and it works.  So
-html tags are fully supported in the definition (probably the word too - I haven't checked).  What I did today
-was make it so those same html tags also apply to the hint feature.  So, if the definition has tags like <i>, 
-or font tags, it will correctly display the one-letter hints with the proper formatting.  
-6/10/2008 - I was thinking about making a "previous word" button in the review panel, 'cause it would be nice
-to have, but it turned out to be harder than I was thinking.  At first I had made the cards a doubly linked
-list, so it would have been really easy, but it turns out I deleted all of the references to previous a while
-ago...  So it would be a bit of work to get it all working.  Not worth it to me yet.
-5/10/2008 - Fixed a few bugs - a null pointer exception in the test panel, and a string index out of bounds
-exception in the hint when there were two spaces next to each other.
-4/13/2008 - Changed the card compare function, so words are now listed in the order they were entered in the
-program, if they were entered on different days, then alphabetically if they were entered on the same day.
-4/8/2008 - Added a test panel, where you can type in the definition of the word to see if you got it right. Ben
-wanted me to add it, so I did.
-3/29/2008 - Fixed the way pictures are entered - it was a hack before, but now it makes sense and works better.
-3/23/2008 - My roommate Ben wanted to have a hint - have it show you the first letter of each word.  So I added
-functionality to do it.
-2/20/2008 - My roommate Brandon wanted to put Japanese characters into the program, and saving it wasn't working.
-So I changed the encoding it wrote and read files with so that it will support unicode.
-2/5/2008 - I had made it so pressing the "Show Definition" button disables the button until the "Next Word" button 
-was pressed, but I changed that to toggle between showing and hiding the definition.  That seemed particularly 
-useful for scriptures, which I just started doing with my program today.  I've been playing with the idea of 
-making different card list types - one for scriptures, one for vocab words, one for images, and whatnot - but 
-I'm not sure that I'll do it.  It would make a few things cooler (like not saying "Show Definition" for a 
-scripture reference), but only a very few things, and it would be too much of a hassle for not enough benefit.  
-2/2/2008 - Now you can enter a file name as a word to use a picture instead of text as the word.  I also added a 
-new list button that makes it easier to start a new list.  And I got rid of the default list and made it so the 
-program loads the last file saved instead.  And I added option panes to warn you if you haven't saved your list,
-instead of the separate JPanels I was using.
-1/31/2008 - I added mnemonics to all of the windows so you can navigate through the program with just the keyboard.
-I totally simplified the ReviewPanelListener, giving it some methods for common things to be done.
-And I went through the rest of the code and simplified it where it needed it.  And, best of all, I wrote 
-a functional word wrap that looks for breaks in words before inserting a line break.  I think I'm totally 
-done with the program.
-1/30/2008 - I finally made it random!  It wasn't as hard as I thought it would be, either.
-I also got rid of the delete button in the review panel and moved that feature to the view/edit words.
-Now to edit the words from the program you go to that panel and can change the word/definition or delete
-words as you please, as long as the format is readable when you're done.  Modifying the words there doesn't
-save them to a file, so if you mess up you can still fix it.  That finishes my to do list...  What next?
-1/17/2008 - added file verification, so you can only save or load files that end with .mem.
-1/15/2008 - made it so you can review words by their definition, not just by the word.  And I 
-added a check if you try to quit without saving your words.  
-1/9/2008 - added a scroll pane to the view words panel, and added a label on the main screen that
-tells you how many words are stored in the current word set.
+
+2/1/2009 - I found a bug when the program was left open over several days.  It
+didn't handle the dates right, as I only set the date when the program opened.
+So I fixed that, making it reset the date all over the place.
+
+6/27/2008 - I discovered that different fonts could be used through the right
+html tags, and it works.  So html tags are fully supported in the definition
+(probably the word too - I haven't checked).  What I did today was make it so
+those same html tags also apply to the hint feature.  So, if the definition has
+tags like <i>, or font tags, it will correctly display the one-letter hints
+with the proper formatting.  
+
+6/10/2008 - I was thinking about making a "previous word" button in the review
+panel, 'cause it would be nice to have, but it turned out to be harder than I
+was thinking.  At first I had made the cards a doubly linked list, so it would
+have been really easy, but it turns out I deleted all of the references to
+previous a while ago...  So it would be a bit of work to get it all working.
+Not worth it to me yet.
+
+5/10/2008 - Fixed a few bugs - a null pointer exception in the test panel, and
+a string index out of bounds exception in the hint when there were two spaces
+next to each other.
+
+4/13/2008 - Changed the card compare function, so words are now listed in the
+order they were entered in the program, if they were entered on different days,
+then alphabetically if they were entered on the same day.
+
+4/8/2008 - Added a test panel, where you can type in the definition of the word
+to see if you got it right. Ben wanted me to add it, so I did.
+
+3/29/2008 - Fixed the way pictures are entered - it was a hack before, but now
+it makes sense and works better.
+
+3/23/2008 - My roommate Ben wanted to have a hint - have it show you the first
+letter of each word.  So I added functionality to do it.
+
+2/20/2008 - My roommate Brandon wanted to put Japanese characters into the
+program, and saving it wasn't working.  So I changed the encoding it wrote and
+read files with so that it will support unicode.
+
+2/5/2008 - I had made it so pressing the "Show Definition" button disables the
+button until the "Next Word" button was pressed, but I changed that to toggle
+between showing and hiding the definition.  That seemed particularly useful for
+scriptures, which I just started doing with my program today.  I've been
+playing with the idea of making different card list types - one for scriptures,
+one for vocab words, one for images, and whatnot - but I'm not sure that I'll
+do it.  It would make a few things cooler (like not saying "Show Definition"
+for a scripture reference), but only a very few things, and it would be too
+much of a hassle for not enough benefit.  
+
+2/2/2008 - Now you can enter a file name as a word to use a picture instead of
+text as the word.  I also added a new list button that makes it easier to start
+a new list.  And I got rid of the default list and made it so the program loads
+the last file saved instead.  And I added option panes to warn you if you
+haven't saved your list, instead of the separate JPanels I was using.
+
+1/31/2008 - I added mnemonics to all of the windows so you can navigate through
+the program with just the keyboard.  I totally simplified the
+ReviewPanelListener, giving it some methods for common things to be done.  And
+I went through the rest of the code and simplified it where it needed it.  And,
+best of all, I wrote a functional word wrap that looks for breaks in words
+before inserting a line break.  I think I'm totally done with the program.
+
+1/30/2008 - I finally made it random!  It wasn't as hard as I thought it would
+be, either.  I also got rid of the delete button in the review panel and moved
+that feature to the view/edit words.  Now to edit the words from the program
+you go to that panel and can change the word/definition or delete words as you
+please, as long as the format is readable when you're done.  Modifying the
+words there doesn't save them to a file, so if you mess up you can still fix
+it.  That finishes my to do list...  What next?
+
+1/17/2008 - added file verification, so you can only save or load files that
+end with .mem.
+
+1/15/2008 - made it so you can review words by their definition, not just by
+the word.  And I added a check if you try to quit without saving your words.  
+
+1/9/2008 - added a scroll pane to the view words panel, and added a label on
+the main screen that tells you how many words are stored in the current word
+set.
 
 
