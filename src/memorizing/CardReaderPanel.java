@@ -444,7 +444,6 @@ public class CardReaderPanel extends JPanel
 		frame.pack();
 	}
 	
-	/* This is longer than the others because it needs to check if the words need to be reviewed */
 	private void goToReviewCardFrame()
 	{
 		setDay();
@@ -466,7 +465,7 @@ public class CardReaderPanel extends JPanel
 			word.setText("There are no words!");
 			showDefButton.setText("Show Definition");
 			definition.setText("");
-			disableButtons();
+			disableReviewButtons();
 		}
 		else
 		{
@@ -478,7 +477,7 @@ public class CardReaderPanel extends JPanel
 			{
 				word.setText("There are no words that need to be reviewed.");
 				definition.setText("");
-				disableButtons();
+				disableReviewButtons();
 				allWords.setEnabled(true);
 				add(reviewCardPanel);
 				repaint();
@@ -488,7 +487,7 @@ public class CardReaderPanel extends JPanel
 			else
 			{
 				current = cardList.get(0);
-				enableButtons();
+				enableReviewButtons();
 				current = cardList.get(currentCardIndex);
 				if (current.word != null)
 				{
@@ -576,7 +575,7 @@ public class CardReaderPanel extends JPanel
 		frame.pack();
 	}
 	
-	private void disableButtons()
+	private void disableReviewButtons()
 	{
 		showDefButton.setEnabled(false);
 		showHintButton.setEnabled(false);
@@ -587,7 +586,7 @@ public class CardReaderPanel extends JPanel
 		randomize.setEnabled(false);
 	}
 	
-	private void enableButtons()
+	private void enableReviewButtons()
 	{
 		showDefButton.setEnabled(true);
 		showHintButton.setEnabled(true);
@@ -815,178 +814,6 @@ public class CardReaderPanel extends JPanel
 		return false;
 	}
 	
-	private String breakUpString(String string)
-	{
-		if (string.length() < maxStringLength)
-			return string;
-		String newString = "<html>", part = "";
-		int partIndex = 0, index = 0;
-		while (index < string.length())
-		{
-			if (index+maxStringLength > string.length())
-				part = string.substring(index);
-			else
-				part = string.substring(index,index+maxStringLength);
-			if (part.length() < maxStringLength)
-			{
-				newString += part;
-				break;
-			}
-			partIndex = part.lastIndexOf(' ');
-			index += partIndex;
-			newString += part.substring(0,partIndex) + "<br>";
-		}
-		return newString;
-	}
-	
-	/* The basic data type of the program - a card has a word, a definition, 
-	 * the day and year memorized (for use in the "need to review" algorithm), 
-	 * and pointers to the previous and next card in the list.  
-	 * The methods should be self-explanatory. */
-	private class Card
-	{
-		public String word;
-		public String pictureFile;
-		public ImageIcon picture;
-		public String definition;
-		public int dayMemorized;
-		public int yearMemorized;
-		
-		public Card (String w, String def, boolean isAPicture, int day, int year)
-		{
-			if (isAPicture)
-			{
-				word = null;
-				pictureFile = w;
-				picture = new ImageIcon("memorizingpictures/"+w);
-			}
-			else
-			{
-				word = w;
-				picture = null;
-			}
-			definition = def;
-			dayMemorized = day;
-			yearMemorized = year;
-		}
-		
-		public Card (Card other)
-		{
-			word = other.word;
-			picture = other.picture;
-			definition = other.definition;
-			dayMemorized = other.dayMemorized;
-			yearMemorized = other.yearMemorized;
-		}
-		
-		public Card copy()
-		{
-			Card newCard = new Card(this);
-			return newCard;
-		}
-		
-		public boolean needToReview()
-		{
-			int numberOfDays = daysBetween(dayToday,yearToday,dayMemorized,yearMemorized);
-			if (numberOfDays < 7)
-				return true;
-			if (numberOfDays%7 == 0 && numberOfDays < 28)
-				return true;
-			if (numberOfDays%28 == 0)
-				return true;
-			return false;
-		}
-		
-		private int daysBetween(int day1, int year1, int day2, int year2)
-		{
-			if (year1 == year2)
-				return day1-day2;
-			else
-				return day1-day2+365;
-		}
-		
-		/* Used by the "view words" button */
-		public String toString() 
-		{
-			String wordsToPrint = "";
-			if (word == null)
-				wordsToPrint += pictureFile + "\n";
-			else
-				wordsToPrint += word + "\n";
-			wordsToPrint += definition + "\n";
-			if (word == null)
-				wordsToPrint += "picture" + "\n";
-			else
-				wordsToPrint += "not a picture" + "\n";
-			wordsToPrint += dayMemorized + "\n" + yearMemorized + "\n";
-			return wordsToPrint;
-		}
-		
-		public int compareTo(Card other)
-		{
-			if (word == null || other.word == null)
-				return 1;
-			if (dayMemorized == other.dayMemorized && yearMemorized == other.yearMemorized)
-				return word.compareTo(other.word);
-			else
-			{
-				if (yearMemorized == other.yearMemorized)
-					return dayMemorized-other.dayMemorized;
-				else
-					return yearMemorized - other.yearMemorized;
-				
-				/* I did this at first, to get the exact number of days as the compare function, but I don't think
-				 * you need it.  But I can't really check it just yet, 'cause it's April.  So I'm leaving it here
-				 * in case I find that the above method doesn't work.
-				if (yearMemorized > other.yearMemorized)
-					return ((yearMemorized-other.yearMemorized)*365+dayMemorized) - other.dayMemorized;
-				else
-					return dayMemorized-((other.yearMemorized-yearMemorized)*365+other.dayMemorized);*/
-			}
-		}
-		
-		/* For reseting a word in the algorithm if you want to review it more */
-		public void setDayMemorized(int day, int year)
-		{
-			dayMemorized = day;
-			yearMemorized = year;
-		}
-
-		/* If the word is the same the cards are considered equal.
-		 * You can't have more than one definition per word */
-		public boolean equals(Card card)
-		{
-			if (word == null || card.word == null)
-				return false;
-			return word.equals(card.word);
-		}
-	}
-	
-	/* A simple wrapper for an ArrayList that adds a few methods for working 
-	 * with all of the cards, like displaying them. */
-	private class CardList<T> extends ArrayList<T> {
-		
-		public CardList<T> copy() {
-			CardList<T> newList = new CardList<T>();
-			for (int i=0; i<size(); i++) {
-				newList.add(get(i));
-			}
-			return newList;
-		}
-		
-		public String displayWords() {
-			String wordsToDisplay = "";
-			for (int i=0; i<size(); i++) {
-				wordsToDisplay += get(i).toString();
-			}
-			return wordsToDisplay;
-		}
-		
-		public String print() {
-			return displayWords();
-		}
-	}
-	
 	/* Add a new card to the list.  This method does not allow duplicate words, 
 	 * and it adds the card to the list in alphabetical order. */
 	private boolean newCard(String word, String def, boolean isAPicture, int day, int year)
@@ -1015,7 +842,7 @@ public class CardReaderPanel extends JPanel
 	{
 		reviewList = new CardList<Card>();
 		for (Card c : list) {
-			if (c.needToReview()) {
+			if (c.needToReview(dayToday, yearToday)) {
 				reviewList.add(c);
 			}
 		}
@@ -1214,7 +1041,7 @@ public class CardReaderPanel extends JPanel
 			{
 				word.setText("There are no words that need to be reviewed.");
 				definition.setText("");
-				disableButtons();
+				disableReviewButtons();
 				allWords.setEnabled(true);
 				return;
 			}
@@ -1223,7 +1050,7 @@ public class CardReaderPanel extends JPanel
 				currentCardIndex = 0;
 				current = cardList.get(0);
 				showWord();
-				enableButtons();
+				enableReviewButtons();
 			}
 		}
 		
@@ -1234,7 +1061,7 @@ public class CardReaderPanel extends JPanel
 			showHintButton.setText("Show Hint");
 			if (byDefinition.isSelected())
 			{
-				word.setText(breakUpString(current.definition));
+				word.setText(StringUtils.breakUpString(current.definition, maxStringLength));
 				if (current.word == null)
 					showDefButton.setText("Show Picture");
 				else
@@ -1246,7 +1073,7 @@ public class CardReaderPanel extends JPanel
 			{
 				if (current.word != null)
 				{
-					word.setText(breakUpString(current.word));
+					word.setText(StringUtils.breakUpString(current.word, maxStringLength));
 					showDefButton.setText("Show Definition");
 				}
 				else
@@ -1273,7 +1100,7 @@ public class CardReaderPanel extends JPanel
 			{
 				if (!byDefinition.isSelected())
 				{
-					definition.setText(breakUpString(current.definition));
+					definition.setText(StringUtils.breakUpString(current.definition, maxStringLength));
 					if (current.word == null)
 						showDefButton.setText("Hide Description");
 					else {
@@ -1291,7 +1118,7 @@ public class CardReaderPanel extends JPanel
 					}
 					else
 					{
-						definition.setText(breakUpString(current.word));
+						definition.setText(StringUtils.breakUpString(current.word, maxStringLength));
 						showDefButton.setText("Hide Word");
 					}
 				}
@@ -1320,7 +1147,7 @@ public class CardReaderPanel extends JPanel
 						toAdd = temp.substring(0,temp.indexOf('<'));
 						temp = temp.substring(temp.indexOf('<'));
 						if (toAdd.length() > 0)
-							defstring += firstLetters(toAdd);
+							defstring += StringUtils.firstLetters(toAdd);
 						if (temp.indexOf('>') >= 0)
 						{
 							defstring += temp.substring(0,temp.indexOf('>')+1);
@@ -1332,7 +1159,7 @@ public class CardReaderPanel extends JPanel
 					{
 						toAdd = temp;
 						temp = "";
-						defstring += firstLetters(toAdd);
+						defstring += StringUtils.firstLetters(toAdd);
 					}
 				}
 				definition.setText("<html>" + defstring);
@@ -1341,15 +1168,7 @@ public class CardReaderPanel extends JPanel
 			}
 		}
 		
-		private String firstLetters(String string)
-		{
-			String newString = "";
-			String[] words = string.split("\\s+");
-			for (int i=0; i<words.length; i++)
-				if (words[i].length() > 0)
-					newString += words[i].charAt(0) + " ";	
-			return newString;
-		}
+		
 	}
 	private class SavePanelListener implements ActionListener
 	{
@@ -1428,7 +1247,7 @@ public class CardReaderPanel extends JPanel
 							result = result.substring(0,i-1) + "<i><b>" + result.substring(i-1);
 						else
 							result = "<i><b>" + result;
-						testDefLabel.setText("<html>Incorrect...<br>" + breakUpString(result));
+						testDefLabel.setText("<html>Incorrect...<br>" + StringUtils.breakUpString(result, maxStringLength));
 					}
 					checkButton.setText("Hide Answer");
 				}
@@ -1442,7 +1261,7 @@ public class CardReaderPanel extends JPanel
 					current = cardList.get(0);
 				}
 				if (!testAllWords.isSelected())
-					while (!current.needToReview())
+					while (!current.needToReview(dayToday, yearToday))
 					{
 						if (currentCardIndex < cardList.size()-1)
 							current = cardList.get(++currentCardIndex);
@@ -1472,7 +1291,7 @@ public class CardReaderPanel extends JPanel
 				testDefLabel.setText("");
 				testArea.setText("");
 				if (!testAllWords.isSelected())
-					while (!current.needToReview())
+					while (!current.needToReview(dayToday, yearToday))
 					{
 						if (currentCardIndex < cardList.size()-1)
 						{
