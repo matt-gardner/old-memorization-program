@@ -50,7 +50,7 @@ public class Card
 	
 	public boolean needToReview(int dayToday, int yearToday)
 	{
-		int numberOfDays = daysBetween(dayToday,yearToday,dayMemorized,yearMemorized);
+		int numberOfDays = daysBetween(dayToday,yearToday);
 		if (numberOfDays < 7)
 			return true;
 		if (numberOfDays%7 == 0 && numberOfDays < 28)
@@ -60,12 +60,12 @@ public class Card
 		return false;
 	}
 	
-	private int daysBetween(int day1, int year1, int day2, int year2)
+	public int daysBetween(int day1, int year1)
 	{
-		if (year1 == year2)
-			return day1-day2;
+		if (year1 == yearMemorized)
+			return day1-dayMemorized;
 		else
-			return day1-day2+365;
+			return day1-dayMemorized+365;
 	}
 	
 	/* Used by the "view words" button */
