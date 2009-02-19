@@ -1,1 +1,1 @@
-java -cp bin memorizing.CardReader &
+java -cp bin:classes memorizing.CardReader &
