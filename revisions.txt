@@ -1,7 +1,7 @@
 CardReaderPanel.java
 Created by Matthew Gardner
 Created June 2007
-Last Modified 2/18/2009
+Last Modified 2/19/2009
 
 The main part of a program for memorizing words.  This program requires a
 driver with a main method, but only to instantiate it and call the start()
@@ -17,6 +17,11 @@ memorizingpictures need to be in the same folder as the memorizing folder.
 See modification notes in revisions.txt.
 
 Most Recent Modifications:
+
+2/19/2009 - More code simplifications, and I fixed the two features that
+I added yesterday so they appear to be fully functional.  The go to function
+finds the next word that matches, so you can use it to scroll through words
+that match.
 
 2/18/2009 - Add a couple of cool features, though they're not totally
 compatabile with the program yet (there are integration things to do), and I
