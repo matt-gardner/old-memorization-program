@@ -1,7 +1,7 @@
 CardReaderPanel.java
 Created by Matthew Gardner
 Created June 2007
-Last Modified 2/15/2009
+Last Modified 2/18/2009
 
 The main part of a program for memorizing words.  This program requires a
 driver with a main method, but only to instantiate it and call the start()
@@ -17,6 +17,14 @@ memorizingpictures need to be in the same folder as the memorizing folder.
 See modification notes in revisions.txt.
 
 Most Recent Modifications:
+
+2/18/2009 - Add a couple of cool features, though they're not totally
+compatabile with the program yet (there are integration things to do), and I
+want to change the behavior of the Go To Word a little bit.  I added a go to
+feature, that will search either by number or by prefix, and a "review most
+recent" feature, which isn't totally done.  And I changed the layout of the
+review panel.  I'm still not quite happy with it, but I think it's probably
+better than it was.
 
 2/17/2009 - I made a few more classes to make the code more cohesive and
 readable.
