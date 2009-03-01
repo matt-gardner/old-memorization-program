@@ -83,7 +83,7 @@ public class CardReaderPanel extends JPanel
 	private TestPanelListener testListener;
 	
 	/* Global variables that are needed */
-	private int xSize = 750, ySize = 200;
+	private int xSize = 750, ySize = 200, xStart = 300, yStart = 150;
 	private Dimension normalSize = new Dimension(xSize,ySize);
 	private Dimension bigSize = new Dimension(750,440);
 	private String numReviewingString = "Reviewing Word: ";
@@ -406,7 +406,7 @@ public class CardReaderPanel extends JPanel
 			loadWords("blank.mem");
 		}
 		goToOpeningFrame();
-		frame.setLocation(350,250);
+		frame.setLocation(xStart,yStart);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().add(this);
 		frame.setVisible(true);
@@ -540,6 +540,7 @@ public class CardReaderPanel extends JPanel
 		showDefButton.setEnabled(false);
 		showHintButton.setEnabled(false);
 		nextWordButton.setEnabled(false);
+		prevWordButton.setEnabled(false);
 		resetWordButton.setEnabled(false);
 		byDefinition.setEnabled(false);
 		allWords.setEnabled(false);
@@ -550,6 +551,7 @@ public class CardReaderPanel extends JPanel
 		showDefButton.setEnabled(true);
 		showHintButton.setEnabled(true);
 		nextWordButton.setEnabled(true);
+		prevWordButton.setEnabled(true);
 		resetWordButton.setEnabled(true);
 		byDefinition.setEnabled(true);
 		if (recentWordsBox.getText().equals(""))
@@ -841,6 +843,7 @@ public class CardReaderPanel extends JPanel
 		if (cardList.size() == 0)
 		{
 			word.setText("There are no words that need to be reviewed.");
+			wordsReviewing.setText(numReviewingString+0+"/"+countCards());
 			definition.setText("");
 			disableReviewButtons();
 			allWords.setEnabled(true);
