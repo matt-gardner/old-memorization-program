@@ -2,6 +2,8 @@ package memorizing;
 
 import javax.swing.*;
 
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -51,11 +53,12 @@ public class CardReaderPanel extends JPanel
 	private CreatePanelListener createListener;
 	
 	/* Review Card Panel */
-	private JPanel reviewCardPanel, subPanel3, subPanel5;
-	private JLabel word, definition, wordsReviewing;
+	private JPanel reviewCardPanel;
+	private JLabel word, definition, wordsReviewing, findWordsLabel, errorLabel, recentWordsLabel, recentWordsLabel2;
 	private JButton resetWordButton, showDefButton, nextWordButton, doneReviewingButton, showHintButton, prevWordButton;
 	private JCheckBox allWords, byDefinition, randomize;
 	private ReviewPanelListener reviewListener;
+	private JTextField findWordsBox, recentWordsBox;
 	
 	/* Save Cards Panel */
 	private JPanel saveCardsPanel, subPanel4;
@@ -82,28 +85,26 @@ public class CardReaderPanel extends JPanel
 	/* Global variables that are needed */
 	private int xSize = 750, ySize = 200;
 	private Dimension normalSize = new Dimension(xSize,ySize);
-	private Dimension bigSize = new Dimension(700,440);
-	//private Card list, current, randomList, savedList;
-	private int numCards, numCardsReviewing;
+	private Dimension bigSize = new Dimension(750,440);
 	private String numReviewingString = "Reviewing Word: ";
 	private int maxStringLength = 85;
-	private String cardListName; //cardList is the name of the current file being read
+	private String cardListName;
 	private String errorMessage = "";
 	private Calendar calendar;
 	private int dayToday, yearToday;
-	private CardList<Card> cardList, randomList, fullList, reviewList;
+	private CardList<Card> cardList, randomList, fullList, reviewList, recentList;
 	private int currentCardIndex;
 	private Card current;
 	
-	public CardReaderPanel ()
+	public CardReaderPanel()
 	{
+		fullList = new CardList<Card>();
 		initializeOpeningWindow();
 		initializeCreateCardWindow();
 		initializeReviewCardsWindow();
 		initializeSaveCardsWindow();
 		initializeViewCardsWindow();
 		initializeTestWindow();
-		fullList = new CardList<Card>();
 		
 		setDay();
 	}
@@ -126,7 +127,7 @@ public class CardReaderPanel extends JPanel
 		welcomePanel.setLayout(new BoxLayout(welcomePanel, BoxLayout.X_AXIS));
 		welcomeLabel = new JLabel ("Welcome to the Program!");
 		wordSetLabel = new JLabel ("Current Set of Words: " + cardListName);
-		numCardsLabel = new JLabel ("Number of Words: " + numCards);
+		numCardsLabel = new JLabel ("Number of Words: " + totalCards());
 		labelPanel = new JPanel();
 		labelPanel.setLayout(new BoxLayout(labelPanel, BoxLayout.X_AXIS));
 		labelPanel.add(Box.createHorizontalGlue());
@@ -223,18 +224,16 @@ public class CardReaderPanel extends JPanel
 	private void initializeReviewCardsWindow()
 	{
 		reviewCardPanel = new JPanel();
-		reviewCardPanel.setLayout(new BoxLayout(reviewCardPanel, BoxLayout.Y_AXIS));
+		FormLayout layout = new FormLayout("p, max(p;20dlu), p, p, 10dlu, 550dlu",
+				"p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p");
+		reviewCardPanel.setLayout(layout);
 		reviewCardPanel.setPreferredSize(bigSize);
 		word = new JLabel();
+		word.setHorizontalTextPosition(SwingConstants.CENTER);
 		//Font font = new Font("Times",Font.PLAIN,24);
 		//word.setFont(font); - I toyed with the idea of being able to change the font.  I might do it later.
-		JPanel wordPanel = new JPanel();
-		wordPanel.add(word);
-		wordPanel.add(Box.createHorizontalGlue());
 		definition = new JLabel();
-		JPanel defPanel = new JPanel();
-		defPanel.add(definition);
-		defPanel.add(Box.createHorizontalGlue());
+		definition.setVerticalTextPosition(SwingConstants.TOP);
 		reviewListener = new ReviewPanelListener();
 		resetWordButton = new JButton("Reset word");
 		resetWordButton.addActionListener(reviewListener);
@@ -263,34 +262,33 @@ public class CardReaderPanel extends JPanel
 		randomize = new JCheckBox("Randomize");
 		randomize.addActionListener(reviewListener);
 		randomize.setMnemonic('R');
+		findWordsBox = new JTextField();
+		findWordsBox.addActionListener(reviewListener);
+		findWordsLabel = new JLabel("Go To Word:");
+		recentWordsBox = new JTextField();
+		recentWordsBox.addActionListener(reviewListener);
+		recentWordsLabel = new JLabel("Only Most Recent");
+		recentWordsLabel2 = new JLabel("days");
+		errorLabel = new JLabel();
 		wordsReviewing = new JLabel(numReviewingString);
-		subPanel5 = new JPanel();
-		subPanel5.setLayout(new BoxLayout(subPanel5, BoxLayout.X_AXIS));
-		subPanel5.add(Box.createHorizontalGlue());
-		subPanel5.add(randomize);
-		subPanel5.add(Box.createHorizontalGlue());
-		subPanel5.add(byDefinition);
-		subPanel5.add(Box.createHorizontalGlue());
-		subPanel5.add(allWords);
-		subPanel5.add(Box.createHorizontalGlue());
-		subPanel5.add(wordsReviewing);
-		subPanel5.add(Box.createHorizontalGlue());
-		subPanel3 = new JPanel();
-		//subPanel3.setLayout(new GridLayout(2, 3));
-		subPanel3.setLayout(new BoxLayout(subPanel3, BoxLayout.X_AXIS));
-		subPanel3.add(resetWordButton);
-		subPanel3.add(showHintButton);
-		subPanel3.add(showDefButton);
-		subPanel3.add(prevWordButton);
-		subPanel3.add(nextWordButton);
-		subPanel3.add(doneReviewingButton);
-		reviewCardPanel.add(Box.createVerticalGlue());
-		reviewCardPanel.add(wordPanel);
-		reviewCardPanel.add(Box.createVerticalGlue());
-		reviewCardPanel.add(defPanel);
-		reviewCardPanel.add(Box.createVerticalGlue());
-		reviewCardPanel.add(subPanel5);
-		reviewCardPanel.add(subPanel3);
+		reviewCardPanel.add(word, new CellConstraints("6, 3, 1, 5, default, default"));
+		reviewCardPanel.add(definition, new CellConstraints("6, 9, 1, 10, default, default"));
+		reviewCardPanel.add(randomize, new CellConstraints("1, 1, 2, 1, default, default"));
+		reviewCardPanel.add(byDefinition, new CellConstraints("1, 3, 2, 1, default, default"));
+		reviewCardPanel.add(allWords, new CellConstraints("1, 5, 2, 1, default, default"));
+		reviewCardPanel.add(wordsReviewing, new CellConstraints("1, 7, 2, 1, default, default"));
+		reviewCardPanel.add(findWordsLabel, new CellConstraints("1, 9, 1, 1, default, default"));
+		reviewCardPanel.add(findWordsBox, new CellConstraints("2, 9, 2, 1, default, default"));
+		reviewCardPanel.add(recentWordsLabel, new CellConstraints("1, 11, 1, 1, default, default"));
+		reviewCardPanel.add(recentWordsBox, new CellConstraints("2, 11, 1, 1, default, default"));
+		reviewCardPanel.add(recentWordsLabel2, new CellConstraints("3, 11, 1, 1, default, default"));
+		reviewCardPanel.add(resetWordButton, new CellConstraints("1, 13, 3, 1, default, default"));
+		reviewCardPanel.add(showHintButton, new CellConstraints("1, 15, 3, 1, default, default"));
+		reviewCardPanel.add(showDefButton, new CellConstraints("1, 17, 3, 1, default, default"));
+		reviewCardPanel.add(prevWordButton, new CellConstraints("1, 19, 3, 1, default, default"));
+		reviewCardPanel.add(nextWordButton, new CellConstraints("1, 21, 3, 1, default, default"));
+		reviewCardPanel.add(doneReviewingButton, new CellConstraints("1, 23, 3, 1, default, default"));
+		reviewCardPanel.add(errorLabel, new CellConstraints("6, 19, 1, 1, default, default"));
 	}
 	private void initializeSaveCardsWindow()
 	{
@@ -424,14 +422,12 @@ public class CardReaderPanel extends JPanel
 		setDay();
 		currentCardIndex = 0;
 		removeAll();
-		numCards = countCards();
 		welcomeLabel.setText("Welcome to the Program!");
-		numCardsLabel.setText("Number of Words: " + numCards);
+		numCardsLabel.setText("Number of Words: " + totalCards());
 		add(openingPanel);
 		repaint();
 		frame.pack();
 	}
-	
 	private void goToCreateCardFrame()
 	{
 		setDay();
@@ -443,23 +439,23 @@ public class CardReaderPanel extends JPanel
 		repaint();
 		frame.pack();
 	}
-	
 	private void goToReviewCardFrame()
 	{
 		setDay();
 		makeReviewList(fullList);
 		removeAll();
 		frame.getRootPane().setDefaultButton(nextWordButton);
-		if (thereArePictures())
+		//if (thereArePictures())
 			reviewCardPanel.setPreferredSize(bigSize);
-		else
-			reviewCardPanel.setPreferredSize(normalSize);
+		//else
+		//	reviewCardPanel.setPreferredSize(normalSize);
 		allWords.setSelected(false);
 		byDefinition.setSelected(false);
 		randomize.setSelected(false);
 		word.setIcon(null);
 		definition.setIcon(null);
-		currentCardIndex = 0;
+		findWordsBox.setText("");
+		recentWordsBox.setText("");
 		if (fullList.size() == 0)
 		{
 			word.setText("There are no words!");
@@ -469,45 +465,12 @@ public class CardReaderPanel extends JPanel
 		}
 		else
 		{
-			numCardsReviewing = countCardsToReview();
-			currentCardIndex = 0;
-			wordsReviewing.setText(numReviewingString+(currentCardIndex+1)+"/"+numCardsReviewing);
-			cardList = reviewList;
-			if (numCardsReviewing == 0)
-			{
-				word.setText("There are no words that need to be reviewed.");
-				definition.setText("");
-				disableReviewButtons();
-				allWords.setEnabled(true);
-				add(reviewCardPanel);
-				repaint();
-				frame.pack();
-				return;
-			}
-			else
-			{
-				current = cardList.get(0);
-				enableReviewButtons();
-				current = cardList.get(currentCardIndex);
-				if (current.word != null)
-				{
-					word.setText(current.word);
-					showDefButton.setText("Show Definition");
-				}
-				else
-				{
-					word.setText("");
-					word.setIcon(current.picture);
-					showDefButton.setText("Show Description");
-				}
-				definition.setText("");
-			}
+			showFirstWord();
 		}
 		add(reviewCardPanel);
 		repaint();
 		frame.pack();
 	}
-
 	private void goToTestCardFrame()
 	{
 		setDay();
@@ -523,11 +486,10 @@ public class CardReaderPanel extends JPanel
 		}
 		else
 		{
-			numCardsReviewing = countCardsToReview();
-			wordsReviewing.setText(numReviewingString+(currentCardIndex+1)+"/"+numCardsReviewing);
+			wordsReviewing.setText(numReviewingString+(currentCardIndex+1)+"/"+countCards());
 			cardList = reviewList;
 			currentCardIndex = 0;
-			if (numCardsReviewing == 0)
+			if (countCards() == 0)
 			{
 				testWordLabel.setText("No words to be tested!");
 				checkButton.setEnabled(false);
@@ -551,7 +513,6 @@ public class CardReaderPanel extends JPanel
 		repaint();
 		frame.pack();
 	}
-	
 	private void goToSaveWordsFrame()
 	{
 		setDay();
@@ -561,7 +522,6 @@ public class CardReaderPanel extends JPanel
 		repaint();
 		frame.pack();
 	}
-	
 	private void goToViewWordsFrame()
 	{
 		setDay();
@@ -585,7 +545,6 @@ public class CardReaderPanel extends JPanel
 		allWords.setEnabled(false);
 		randomize.setEnabled(false);
 	}
-	
 	private void enableReviewButtons()
 	{
 		showDefButton.setEnabled(true);
@@ -593,10 +552,10 @@ public class CardReaderPanel extends JPanel
 		nextWordButton.setEnabled(true);
 		resetWordButton.setEnabled(true);
 		byDefinition.setEnabled(true);
-		allWords.setEnabled(true);
+		if (recentWordsBox.getText().equals(""))
+			allWords.setEnabled(true);
 		randomize.setEnabled(true);
-	}
-	
+	}	
 	
 	/* This version of save words is called from the "Save words as" panel.
 	 * For ease of reading in the file, the word, definition, year and 
@@ -679,8 +638,7 @@ public class CardReaderPanel extends JPanel
 				welcomeLabel.setText("Words successfully loaded");
 			}
 			wordSetLabel.setText("Current Set of Words: " + cardListName);
-			numCards = countCards();
-			numCardsLabel.setText("Number of Cards: " + numCards);
+			numCardsLabel.setText("Number of Cards: " + totalCards());
 			newWordButton.setEnabled(true);
 			saveWordsButton.setEnabled(true);
 			saveWordsAsButton.setEnabled(true);
@@ -744,7 +702,6 @@ public class CardReaderPanel extends JPanel
 			return false;
 		}
 	}
-
 	private boolean parseWords(BufferedReader in) throws IOException
 	{
 		fullList = new CardList<Card>();
@@ -778,41 +735,14 @@ public class CardReaderPanel extends JPanel
 		return true;
 	}
 	
-		
-	/* I wrote this in the easiest way I could think of so I wouldn't have to 
-	 * modify my listener code.  This method creates a temporary array of cards,
-	 * populates it randomly from the words in the current list (making a copy of
-	 * the list, of course, so you don't mess with the pointers in the original list),
-	 * then makes a new list ordered in the same order as the array.  It saves a pointer
-	 * to the original list, makes the "list" variable point to the random list, and 
-	 * then you're done.  When you leave the review panel you need to be sure to reset the
-	 * list pointer to the saved list. */
-	private void randomize()
-	{
-		Card[] tempList = new Card[numCards];
-		Random rand = new Random();
-		for (int i=0; i<fullList.size(); i++)
-		{
-			int j = rand.nextInt(numCards);
-			while (tempList[j] != null)
-				j = rand.nextInt(numCards);
-			tempList[j] = fullList.get(i);
-		}
-		randomList = new CardList<Card>();
-		for (int i=0; i<tempList.length; i++)
-		{
-			randomList.add(tempList[i]);
-		}
-	}
-	
-	private boolean thereArePictures()
+	/*private boolean thereArePictures()
 	{
 		for (int i=0; i<fullList.size(); i++) {
 			if (fullList.get(i).word == null)
 				return true;
 		}
 		return false;
-	}
+	}*/
 	
 	/* Add a new card to the list.  This method does not allow duplicate words, 
 	 * and it adds the card to the list in alphabetical order. */
@@ -829,14 +759,14 @@ public class CardReaderPanel extends JPanel
 		fullList.add(i,newCard);
 		return true;
 	}
-	private int countCards()
+	private int totalCards()
 	{
 		return fullList.size();
 	}
-	private int countCardsToReview()
+	private int countCards()
 	{
-		return reviewList.size();
-	}	
+		return cardList.size();
+	}
 	
 	private void makeReviewList(CardList<Card> list)
 	{
@@ -845,6 +775,195 @@ public class CardReaderPanel extends JPanel
 			if (c.needToReview(dayToday, yearToday)) {
 				reviewList.add(c);
 			}
+		}
+	}
+	private void makeRecentList(int numDays)
+	{
+		recentList = new CardList<Card>();
+		for (Card c : fullList)
+		{
+			if (c.daysBetween(dayToday, yearToday)<numDays)
+			{
+				recentList.add(c);
+			}
+		}
+	}
+	private void makeRandomList(CardList<Card> list)
+	{
+		Card[] tempList = new Card[list.size()];
+		Random rand = new Random();
+		for (int i=0; i<list.size(); i++)
+		{
+			int j = rand.nextInt(list.size());
+			while (tempList[j] != null)
+				j = rand.nextInt(list.size());
+			tempList[j] = list.get(i);
+		}
+		randomList = new CardList<Card>();
+		for (int i=0; i<tempList.length; i++)
+		{
+			randomList.add(tempList[i]);
+		}
+	}
+	
+	private void showFirstWord()
+	{
+		if (recentWordsBox.getText().equals("")) {
+			if (allWords.isSelected()) {
+				if (randomize.isSelected()) {
+					makeRandomList(fullList);
+					cardList = randomList;
+				}
+				else
+					cardList = fullList;
+			}
+			else {
+				if (randomize.isSelected()) {
+					makeReviewList(fullList);
+					makeRandomList(reviewList);
+					cardList = randomList;
+				}
+				else {
+					makeReviewList(fullList);
+					cardList = reviewList;
+				}
+			}
+		}
+		else {
+			if (randomize.isSelected()) {
+				makeRandomList(recentList);
+				cardList = randomList;
+			}
+			else {
+				cardList = recentList;
+			}
+		}
+		if (cardList.size() == 0)
+		{
+			word.setText("There are no words that need to be reviewed.");
+			definition.setText("");
+			disableReviewButtons();
+			allWords.setEnabled(true);
+			return;
+		}
+		else
+		{
+			currentCardIndex = 0;
+			current = cardList.get(0);
+			showWord();
+			enableReviewButtons();
+		}
+	}
+	private void showWord()
+	{
+		word.setIcon(null);
+		definition.setIcon(null);
+		showHintButton.setText("Show Hint");
+		wordsReviewing.setText(numReviewingString+(currentCardIndex+1)+"/"+countCards());
+		if (byDefinition.isSelected())
+		{
+			word.setText(StringUtils.breakUpString(current.definition, maxStringLength));
+			if (current.word == null)
+				showDefButton.setText("Show Picture");
+			else
+				showDefButton.setText("Show Word");
+			definition.setText("");
+			showDefButton.setEnabled(true);
+		}
+		else
+		{
+			if (current.word != null)
+			{
+				word.setText(StringUtils.breakUpString(current.word, maxStringLength));
+				showDefButton.setText("Show Definition");
+			}
+			else
+			{
+				word.setText("");
+				word.setIcon(current.picture);
+				showDefButton.setText("Show Description");
+			}
+			definition.setText("");
+			showDefButton.setEnabled(true);
+		}
+	}
+	private void showDefinition()
+	{
+		if (showDefButton.getText().startsWith("Hide"))
+		{
+			showDefButton.setText(showDefButton.getText().replaceFirst("Hide", "Show"));
+			showHintButton.setText("Show Hint");
+			definition.setText("");
+			definition.setIcon(null);
+		}
+		else
+		{
+			if (!byDefinition.isSelected())
+			{
+				definition.setText(StringUtils.breakUpString(current.definition, maxStringLength));
+				if (current.word == null)
+					showDefButton.setText("Hide Description");
+				else {
+					showDefButton.setText("Hide Definition");
+					showHintButton.setText("Show Hint");
+				}
+			}
+			else
+			{
+				if (current.word == null)
+				{
+					definition.setText("");
+					definition.setIcon(current.picture);
+					showDefButton.setText("Hide Picture");
+				}
+				else
+				{
+					definition.setText(StringUtils.breakUpString(current.word, maxStringLength));
+					showDefButton.setText("Hide Word");
+				}
+			}
+		}
+	}
+	private void showHint() 
+	{
+		if (showHintButton.getText().startsWith("Hide"))
+		{
+			showHintButton.setText(showHintButton.getText().replaceFirst("Hide", "Show"));
+			showDefButton.setText("Show Definition");
+			definition.setText("");
+			definition.setIcon(null);
+		}
+		else
+		{
+			String defstring = "";
+			String temp = current.definition;
+			while (temp.length() > 0)
+			{
+				String toAdd = "";
+				//Get everything before the start of a tag
+				if (temp.indexOf('<') >= 0)
+				{
+					toAdd = temp.substring(0,temp.indexOf('<'));
+					temp = temp.substring(temp.indexOf('<'));
+					if (toAdd.length() > 0)
+						defstring += StringUtils.firstLetters(toAdd);
+					if (temp.indexOf('>') >= 0)
+					{
+						defstring += temp.substring(0,temp.indexOf('>')+1);
+						temp = temp.substring(temp.indexOf('>')+1);
+					}
+				}
+				//There was no tag
+				else
+				{
+					toAdd = temp;
+					temp = "";
+					defstring += StringUtils.firstLetters(toAdd);
+				}
+			}
+			definition.setText("<html>" + defstring);
+			showHintButton.setText("Hide Hint");
+			showDefButton.setText("Show Definition");
 		}
 	}
 	
@@ -954,31 +1073,18 @@ public class CardReaderPanel extends JPanel
 	{
 		public void actionPerformed (ActionEvent event)
 		{
+			errorLabel.setText("");
 			if (event.getSource() == randomize)
 			{
-				if (randomize.isSelected())
-				{
-					randomize();
-				}
 				showFirstWord();
 			}
 			if (event.getSource() == byDefinition)
 			{
 				showWord();
-				if (byDefinition.isSelected())
-					showHintButton.setEnabled(false);
-				else
-					showHintButton.setEnabled(true);
 			}
 			if (event.getSource() == allWords)
 			{	
 				showFirstWord();
-
-				if (allWords.isSelected())
-					numCardsReviewing = countCards();
-				else
-					numCardsReviewing = countCardsToReview();
-				wordsReviewing.setText(numReviewingString+(currentCardIndex+1)+"/"+numCardsReviewing);
 			}
 			if (event.getSource() == resetWordButton)
 			{
@@ -999,16 +1105,13 @@ public class CardReaderPanel extends JPanel
 				showHint();
 			}
 			if (event.getSource() == nextWordButton)  
-			{		//You don't have to worry about the case that there is no word to review, 
-					//because we took care of that in the goToReviewCardFrame method, and this 
-					//button would be disabled
+			{		
 				if (!(currentCardIndex == cardList.size() - 1))
 					currentCardIndex++;
 				else
 					currentCardIndex = 0;
 				current = cardList.get(currentCardIndex);
 				showWord();
-				wordsReviewing.setText(numReviewingString+(currentCardIndex+1)+"/"+numCardsReviewing);
 			}
 			if (event.getSource() == prevWordButton)
 			{
@@ -1018,157 +1121,60 @@ public class CardReaderPanel extends JPanel
 					currentCardIndex = cardList.size() - 1;
 				current = cardList.get(currentCardIndex);
 				showWord();
-				wordsReviewing.setText(numReviewingString+(currentCardIndex+1)+"/"+numCardsReviewing);
 			}
-		}
-		
-		private void showFirstWord()
-		{
-			if (allWords.isSelected()) {
-				if (randomize.isSelected())
-					cardList = randomList;
-				else
-					cardList = fullList;
-			}
-			else {
-				if (randomize.isSelected())
-					makeReviewList(randomList);
-				else
-					makeReviewList(fullList);
-				cardList = reviewList;
-			}
-			if (cardList.size() == 0)
+			if (event.getSource() == findWordsBox)
 			{
-				word.setText("There are no words that need to be reviewed.");
-				definition.setText("");
-				disableReviewButtons();
-				allWords.setEnabled(true);
-				return;
-			}
-			else
-			{
-				currentCardIndex = 0;
-				current = cardList.get(0);
-				showWord();
-				enableReviewButtons();
-			}
-		}
-		
-		private void showWord()
-		{
-			word.setIcon(null);
-			definition.setIcon(null);
-			showHintButton.setText("Show Hint");
-			if (byDefinition.isSelected())
-			{
-				word.setText(StringUtils.breakUpString(current.definition, maxStringLength));
-				if (current.word == null)
-					showDefButton.setText("Show Picture");
-				else
-					showDefButton.setText("Show Word");
-				definition.setText("");
-				showDefButton.setEnabled(true);
-			}
-			else
-			{
-				if (current.word != null)
+				try
 				{
-					word.setText(StringUtils.breakUpString(current.word, maxStringLength));
-					showDefButton.setText("Show Definition");
+					currentCardIndex = Integer.parseInt(findWordsBox.getText())-1;
+					current = cardList.get(currentCardIndex);
+					showWord();
 				}
-				else
+				catch (IndexOutOfBoundsException e)
 				{
-					word.setText("");
-					word.setIcon(current.picture);
-					showDefButton.setText("Show Description");
+					errorLabel.setText("There aren't that many words in the set!");
 				}
-				definition.setText("");
-				showDefButton.setEnabled(true);
-			}
-		}
-		
-		private void showDefinition()
-		{
-			if (showDefButton.getText().startsWith("Hide"))
-			{
-				showDefButton.setText(showDefButton.getText().replaceFirst("Hide", "Show"));
-				showHintButton.setText("Show Hint");
-				definition.setText("");
-				definition.setIcon(null);
-			}
-			else
-			{
-				if (!byDefinition.isSelected())
+				catch (NumberFormatException e)
 				{
-					definition.setText(StringUtils.breakUpString(current.definition, maxStringLength));
-					if (current.word == null)
-						showDefButton.setText("Hide Description");
-					else {
-						showDefButton.setText("Hide Definition");
-						showHintButton.setText("Show Hint");
-					}
-				}
-				else
-				{
-					if (current.word == null)
+					String prefix = findWordsBox.getText();
+					boolean found = false;
+					int i = currentCardIndex;
+					for (++i; i!=currentCardIndex; i++)
 					{
-						definition.setText("");
-						definition.setIcon(current.picture);
-						showDefButton.setText("Hide Picture");
-					}
-					else
-					{
-						definition.setText(StringUtils.breakUpString(current.word, maxStringLength));
-						showDefButton.setText("Hide Word");
-					}
-				}
-			}
-		}
-		
-		private void showHint() 
-		{
-			if (showHintButton.getText().startsWith("Hide"))
-			{
-				showHintButton.setText(showHintButton.getText().replaceFirst("Hide", "Show"));
-				showDefButton.setText("Show Definition");
-				definition.setText("");
-				definition.setIcon(null);
-			}
-			else
-			{
-				String defstring = "";
-				String temp = current.definition;
-				while (temp.length() > 0)
-				{
-					String toAdd = "";
-					//Get everything before the start of a tag
-					if (temp.indexOf('<') >= 0)
-					{
-						toAdd = temp.substring(0,temp.indexOf('<'));
-						temp = temp.substring(temp.indexOf('<'));
-						if (toAdd.length() > 0)
-							defstring += StringUtils.firstLetters(toAdd);
-						if (temp.indexOf('>') >= 0)
+						if (i==cardList.size())
+							i = 0;
+						if (cardList.get(i).word.startsWith(prefix))
 						{
-							defstring += temp.substring(0,temp.indexOf('>')+1);
-							temp = temp.substring(temp.indexOf('>')+1);
+							currentCardIndex = i;
+							current = cardList.get(currentCardIndex);
+							showWord();
+							found = true;
+							break;
 						}
 					}
-					//There was no tag
-					else
-					{
-						toAdd = temp;
-						temp = "";
-						defstring += StringUtils.firstLetters(toAdd);
-					}
+					if (!found)
+						errorLabel.setText("There isn't a word that starts with "+prefix);
 				}
-				definition.setText("<html>" + defstring);
-				showHintButton.setText("Hide Hint");
-				showDefButton.setText("Show Definition");
+			}
+			if (event.getSource() == recentWordsBox)
+			{
+				if (recentWordsBox.getText().equals("")) {
+					allWords.setEnabled(true);
+					showFirstWord();
+					return;
+				}
+				try
+				{
+					makeRecentList(Integer.parseInt(recentWordsBox.getText()));
+					showFirstWord();
+					allWords.setEnabled(false);
+				}
+				catch (NumberFormatException e)
+				{
+					errorLabel.setText("That isn't a number!");
+				}
 			}
 		}
-		
-		
 	}
 	private class SavePanelListener implements ActionListener
 	{
