@@ -1144,8 +1144,11 @@ public class CardReaderPanel extends JPanel
 					int i = currentCardIndex;
 					for (++i; i!=currentCardIndex; i++)
 					{
-						if (i==cardList.size())
+						if (i==cardList.size()) {
 							i = 0;
+							if (i==currentCardIndex) 
+								break;
+						}
 						if (cardList.get(i).word.startsWith(prefix))
 						{
 							currentCardIndex = i;
