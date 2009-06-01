@@ -276,7 +276,7 @@ public class CardReaderPanel extends JPanel
 		reviewCardPanel.add(randomize, new CellConstraints("1, 1, 2, 1, default, default"));
 		reviewCardPanel.add(byDefinition, new CellConstraints("1, 3, 2, 1, default, default"));
 		reviewCardPanel.add(allWords, new CellConstraints("1, 5, 2, 1, default, default"));
-		reviewCardPanel.add(wordsReviewing, new CellConstraints("1, 7, 2, 1, default, default"));
+		reviewCardPanel.add(wordsReviewing, new CellConstraints("1, 7, 3, 1, default, default"));
 		reviewCardPanel.add(findWordsLabel, new CellConstraints("1, 9, 1, 1, default, default"));
 		reviewCardPanel.add(findWordsBox, new CellConstraints("2, 9, 2, 1, default, default"));
 		reviewCardPanel.add(recentWordsLabel, new CellConstraints("1, 11, 1, 1, default, default"));
