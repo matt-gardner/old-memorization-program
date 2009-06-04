@@ -43,7 +43,7 @@ readable.
 2/16/2009 - I put all of this into an internet-facing git repository that can
 be cloned with this command:
 
-git clone git://aml.cs.byu.edu/mjg82/memorizing.git
+git clone git://aml.cs.byu.edu/memorizing.git
 
 2/15/2009 - Made enormous changes to the code, greatly simplifying the logic
 now that I'm using array lists instead of my own list.  I keep a couple of
