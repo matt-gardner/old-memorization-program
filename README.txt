@@ -3,24 +3,20 @@ README
 
 Created and copyrighted by Matthew Gardner
 
-//TODO:  Fix this with the updates...
-
 Feel free to use this program however you wish, but I ask that you do not
-distribute it unless granted permission by me.
+distribute it unless granted permission by me.  (I don't know much about 
+licenses.  I'll have to look into that before I release it to the wild.)
 
 Email: draifen@gmail.com
-Last updated March 29, 2008
+Last updated June 3, 2009
 
 How to use the program:
 
-In order to run the program, put the Memorization Program folder in your
-"Program Files" folder (on a PC - in the "Applications" folder on a Mac), and
-double click the Memorization Program.cmd file.  It should work fine from
-there.  (On a Mac it could be more complicated.  You might need to change the
-execution privilege for the .command file.  Instructions for doing that are at
-the end of this file.) At start up, the program will load the last file saved.
+Run the script run.sh.  At start up, the program will load the last file saved.
 If no file has been saved, it will load a blank list.  The program should be
 pretty self explanatory, but here are a few tips:
+
+General Tips:
 
 This program works best when it is used daily, as it has an algorithm that
 decides what words should be reviewed.  It reviews words once a day for a week,
@@ -39,6 +35,26 @@ also do what you would expect (in the save words as panel it will hit save, in
 the add words panel it will add the word, in the view/edit words panel it will
 put in a new line).
 
+Review Panel:
+
+There are two boxes in the review panel: "Go to Word" and "Only Most Recent __
+Days".  The "Go to Word" box takes either a number, to jump to that word
+number, or a substring matching the start of a word.  Hitting enter while in
+that field will take you to the word you want (in the case of the matching
+substring, it will take you to the next match, so you can cycle through words
+that start with 'p' that way, for instance).  The "Only Most Recent" box takes
+only a number n, and it will make the list that is currently being reviewed
+only those words that were entered into the program in the last n days.
+
+The "Show Hint" feature is meant for words with long definitions.  It was
+originally implemented for use with scripture references - people often will
+write on a card just the first letter of every word as a hint.  That is what
+the "Show Hint" button shows you.
+
+Add Words panel:
+
+/* This is currently broken.  In fact it never worked right.  Maybe I'll add
+it in the right way some time.
 To add a picture, put the picture in the memorizingpictures folder, then in the
 add words panel put the name of the file in the word text area, with its
 description in the definition text area, and click the "This is a picture" box
@@ -50,6 +66,7 @@ pictures the panel gets bigger, but still, pictures much bigger than 150 pixels
 on each side will be too big for the program.  If that happens, you can still
 navigate out by pressing alt+d, then you can delete the picture from the
 View/Edit words panel.  
+*/
 
 View/Edit panel:
 
@@ -64,27 +81,24 @@ changes," the format needs to still be the same, with no extra or missing
 lines, or the program will give you an error message and won't make the
 changes.  The changes made are not written to file until you save them with the
 save button.  Here is where you can delete words or modify the definition of a
-word if you wish.  To delete a word, just delete all five of its lines, making
-sure there is no extra space in between the words before and after it.  This is
-the same format that is used in the .mem files, so if you wish you can also
-make the changes to that file.  But be careful, because if you mess it up the
-file won't load anymore.  At least in the view/edit panel if you make bad
-changes it keeps what you had before.
+word if you wish (you can also delete words in the review panel, but modifying
+the definition can only be done here).  To delete a word, just delete all five
+of its lines, making sure there is no extra space in between the words before
+and after it.  This is the same format that is used in the .mem files, so if
+you wish you can also make the changes to that file.  But be careful, because
+if you mess it up the file won't load anymore.  At least in the view/edit panel
+if you make bad changes it keeps what you had before.
+
+Test panel:
+
+This was added at the request of a friend, though I haven't put much work into
+it.  You can type into the text box and click on the Check Answer button when
+you're done, to see if the text you entered matches the text that's stored for
+the definition.  The only point is if you want to actually type something
+instead of just saying it or going over it in your head, or if you care about
+perfect accuracy.
+
+
 
 If you have any questions, find any bugs, or think of some cool addition to the
 program, send me an email.
-
-Changing execution privileges on a Mac:
-
-If you try double clicking the Memorization Program.command file and it doesn't
-work, the file probably is not set to be executable.  To fix that, open a
-terminal and navigate to the folder where the file is, by typing something like
-this:
-
-cd /Applications/Memorization\ Program/
-
-When you are in the right folder, type this:
-
-chmod 755 Memorization\ Program.command
-
-You should then be able to double click the icon and start the program.

@@ -39,8 +39,8 @@ public class CardReaderPanel extends JPanel
 	private JFrame frame;
 	private JPanel openingPanel, welcomePanel, labelPanel, subPanel;
 	private JLabel welcomeLabel, wordSetLabel, numCardsLabel;
-	private JButton newWordButton, saveWordsButton, saveWordsAsButton, loadWordsButton, reviewWordsButton, 
-					viewWordsButton, quitButton, newListButton, testButton;
+	private JButton newWordButton, saveWordsButton, saveWordsAsButton, loadWordsButton, reviewWordsButton;
+	private JButton viewWordsButton, quitButton, newListButton, testButton;
 	private JFileChooser chooser;
 	private OpeningPanelListener openingListener;
 	
@@ -55,7 +55,8 @@ public class CardReaderPanel extends JPanel
 	/* Review Card Panel */
 	private JPanel reviewCardPanel;
 	private JLabel word, definition, wordsReviewing, findWordsLabel, errorLabel, recentWordsLabel, recentWordsLabel2;
-	private JButton resetWordButton, showDefButton, nextWordButton, doneReviewingButton, showHintButton, prevWordButton;
+	private JButton resetWordButton, showDefButton, nextWordButton, doneReviewingButton, showHintButton;
+	private JButton prevWordButton, deleteWordButton;
 	private JCheckBox allWords, byDefinition, randomize;
 	private ReviewPanelListener reviewListener;
 	private JTextField findWordsBox, recentWordsBox;
@@ -190,7 +191,7 @@ public class CardReaderPanel extends JPanel
 		createCardPanel.setLayout(new BoxLayout(createCardPanel, BoxLayout.Y_AXIS));
 		createCardPanel.setPreferredSize(normalSize);
 		createListener = new CreatePanelListener();
-		wordLabel = new JLabel ("Word, reference, or file name for a picture:");
+		wordLabel = new JLabel ("Word or reference:");
 		defLabel = new JLabel ("Definition, text, or description:");
 		wordField = new JTextField ("Enter Word or Reference");
 		wordField.addActionListener(createListener);
@@ -203,12 +204,12 @@ public class CardReaderPanel extends JPanel
 		addWordButton.addActionListener(createListener);
 		addWordButton.setMnemonic('A');
 		isPicture = new JCheckBox("This is a picture");
-		isPicture.addActionListener(createListener);
+		//isPicture.addActionListener(createListener);
 		subPanel2 = new JPanel ();
 		subPanel2.setLayout(new BoxLayout(subPanel2, BoxLayout.X_AXIS));
 		subPanel2.add(Box.createHorizontalGlue());
-		subPanel2.add(isPicture);
-		subPanel2.add(Box.createHorizontalGlue());
+		//subPanel2.add(isPicture);
+		//subPanel2.add(Box.createHorizontalGlue());
 		subPanel2.add(addWordButton);
 		subPanel2.add(Box.createHorizontalGlue());
 		subPanel2.add(doneButton);
@@ -225,7 +226,8 @@ public class CardReaderPanel extends JPanel
 	{
 		reviewCardPanel = new JPanel();
 		FormLayout layout = new FormLayout("p, max(p;20dlu), p, p, 10dlu, 550dlu",
-				"p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p");
+				"p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, "
+				+"p, 3dlu, p, 3dlu, p, 3dlu, p");
 		reviewCardPanel.setLayout(layout);
 		reviewCardPanel.setPreferredSize(bigSize);
 		word = new JLabel();
@@ -253,6 +255,8 @@ public class CardReaderPanel extends JPanel
 		doneReviewingButton = new JButton("Done Reviewing");
 		doneReviewingButton.addActionListener(reviewListener);
 		doneReviewingButton.setMnemonic('D');
+		deleteWordButton = new JButton("Remove Word");
+		deleteWordButton.addActionListener(reviewListener);
 		allWords = new JCheckBox("Review All Words");
 		allWords.addActionListener(reviewListener);
 		allWords.setMnemonic('A');
@@ -287,7 +291,8 @@ public class CardReaderPanel extends JPanel
 		reviewCardPanel.add(showDefButton, new CellConstraints("1, 17, 3, 1, default, default"));
 		reviewCardPanel.add(prevWordButton, new CellConstraints("1, 19, 3, 1, default, default"));
 		reviewCardPanel.add(nextWordButton, new CellConstraints("1, 21, 3, 1, default, default"));
-		reviewCardPanel.add(doneReviewingButton, new CellConstraints("1, 23, 3, 1, default, default"));
+		reviewCardPanel.add(deleteWordButton, new CellConstraints("1, 27, 3, 1, default, default"));
+		reviewCardPanel.add(doneReviewingButton, new CellConstraints("1, 31, 3, 1, default, default"));
 		reviewCardPanel.add(errorLabel, new CellConstraints("6, 19, 1, 1, default, default"));
 	}
 	private void initializeSaveCardsWindow()
@@ -486,8 +491,8 @@ public class CardReaderPanel extends JPanel
 		}
 		else
 		{
-			wordsReviewing.setText(numReviewingString+(currentCardIndex+1)+"/"+countCards());
 			cardList = reviewList;
+			wordsReviewing.setText(numReviewingString+(currentCardIndex+1)+"/"+countCards());
 			currentCardIndex = 0;
 			if (countCards() == 0)
 			{
@@ -542,6 +547,7 @@ public class CardReaderPanel extends JPanel
 		nextWordButton.setEnabled(false);
 		prevWordButton.setEnabled(false);
 		resetWordButton.setEnabled(false);
+		deleteWordButton.setEnabled(false);
 		byDefinition.setEnabled(false);
 		allWords.setEnabled(false);
 		randomize.setEnabled(false);
@@ -552,6 +558,7 @@ public class CardReaderPanel extends JPanel
 		showHintButton.setEnabled(true);
 		nextWordButton.setEnabled(true);
 		prevWordButton.setEnabled(true);
+		deleteWordButton.setEnabled(true);
 		resetWordButton.setEnabled(true);
 		byDefinition.setEnabled(true);
 		if (recentWordsBox.getText().equals(""))
@@ -843,7 +850,7 @@ public class CardReaderPanel extends JPanel
 		if (cardList.size() == 0)
 		{
 			word.setText("There are no words that need to be reviewed.");
-			wordsReviewing.setText(numReviewingString+0+"/"+countCards());
+			wordsReviewing.setText(numReviewingString+"0/0");
 			definition.setText("");
 			disableReviewButtons();
 			allWords.setEnabled(true);
@@ -1106,6 +1113,33 @@ public class CardReaderPanel extends JPanel
 			if (event.getSource() == showHintButton)
 			{
 				showHint();
+			}
+			if (event.getSource() == deleteWordButton)
+			{
+				int response = JOptionPane.showConfirmDialog(frame, 
+						"Are you sure you want to delete this word?  This can't be undone.",
+						"Deleting Word",
+						JOptionPane.YES_NO_OPTION);
+				switch (response) {
+				case JOptionPane.NO_OPTION:
+					return;
+				}
+				Card card = cardList.get(currentCardIndex);
+				cardList.remove(card);
+				if (cardList != fullList)
+				{
+					fullList.remove(card);
+				}
+				if (currentCardIndex == cardList.size())
+					currentCardIndex = 0;
+				if (cardList.size() == 0)
+					showFirstWord();
+				else 
+				{
+					current = cardList.get(currentCardIndex);
+					showWord();
+				}
+				wordSetLabel.setText("Current Set of Words: Modified");
 			}
 			if (event.getSource() == nextWordButton)  
 			{		
