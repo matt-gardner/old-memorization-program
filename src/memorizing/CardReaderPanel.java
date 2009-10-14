@@ -1173,7 +1173,7 @@ public class CardReaderPanel extends JPanel
 				}
 				catch (NumberFormatException e)
 				{
-					String prefix = findWordsBox.getText();
+					String substring = findWordsBox.getText();
 					boolean found = false;
 					int i = currentCardIndex;
 					for (++i; i!=currentCardIndex; i++)
@@ -1183,17 +1183,30 @@ public class CardReaderPanel extends JPanel
 							if (i==currentCardIndex) 
 								break;
 						}
-						if (cardList.get(i).word.startsWith(prefix))
-						{
-							currentCardIndex = i;
-							current = cardList.get(currentCardIndex);
-							showWord();
-							found = true;
-							break;
+						if (byDefinition.isSelected()) {
+							if (cardList.get(i).definition.contains(substring))
+							{
+								currentCardIndex = i;
+								current = cardList.get(currentCardIndex);
+								showWord();
+								found = true;
+								break;
+							}
+						}
+						else {
+							if (cardList.get(i).word.contains(substring))
+							{
+								currentCardIndex = i;
+								current = cardList.get(currentCardIndex);
+								showWord();
+								found = true;
+								break;
+							}
 						}
 					}
-					if (!found)
-						errorLabel.setText("There isn't a word that starts with "+prefix);
+					if (!found) {
+						errorLabel.setText("There isn't a word that contains "+substring);
+					}
 				}
 			}
 			if (event.getSource() == recentWordsBox)
