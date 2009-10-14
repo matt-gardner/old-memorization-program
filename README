@@ -8,7 +8,7 @@ distribute it unless granted permission by me.  (I don't know much about
 licenses.  I'll have to look into that before I release it to the wild.)
 
 Email: draifen@gmail.com
-Last updated June 3, 2009
+Last updated October 14, 2009
 
 How to use the program:
 
@@ -39,10 +39,10 @@ Review Panel:
 
 There are two boxes in the review panel: "Go to Word" and "Only Most Recent __
 Days".  The "Go to Word" box takes either a number, to jump to that word
-number, or a substring matching the start of a word.  Hitting enter while in
+number, or a substring matching the any part of a word.  Hitting enter while in
 that field will take you to the word you want (in the case of the matching
 substring, it will take you to the next match, so you can cycle through words
-that start with 'p' that way, for instance).  The "Only Most Recent" box takes
+that contain 'prize' that way, for instance).  The "Only Most Recent" box takes
 only a number n, and it will make the list that is currently being reviewed
 only those words that were entered into the program in the last n days.
 

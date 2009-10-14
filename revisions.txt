@@ -1,35 +1,29 @@
-CardReaderPanel.java
+Memorization Program
 Created by Matthew Gardner
 Created June 2007
-Last Modified 3/2/2009
+Last Modified 10/14/2009
 
-The main part of a program for memorizing words.  This program requires a
-driver with a main method, but only to instantiate it and call the start()
-method.  I considered making the different frames separate classes to make the
-file smaller and easier to read, but that would be too much hassle if I could
-get it to work at all, because the frames depend on each other - you need to
-access the class variables from almost all of the frames.  I suppose I could do
-it with inheritance, but that's more trouble than it's worth.  The program
-keeps track of cards entered by reading and writing text files that are stored
-in a folder called memorizingfiles.  The folders memorizingfiles and
-memorizingpictures need to be in the same folder as the memorizing folder. 
-
-See modification notes in revisions.txt.
+See the README file for information on the program itself.
 
 Most Recent Modifications:
 
-3/2/2009 - Fixed a bug in the find words box.  If it was on the first word,
-and there was no word that matched what you were looking for, it went into
-an infinite loop.
+10/14/2009 - Slightly changed the behavior of the find words box, so that it
+does more of what you would expect.  It now searches for any substring of the
+word, not just the start of the word, and if you're going by definition it will
+search the definition, not the word itself.
+
+3/2/2009 - Fixed a bug in the find words box.  If it was on the first word, and
+there was no word that matched what you were looking for, it went into an
+infinite loop.
 
 3/1/2009 - Fixed a few bugs when there weren't any words to be reviewed.
 
-2/19/2009 - More code simplifications, and I fixed the two features that
-I added yesterday so they appear to be fully functional.  The go to function
+2/19/2009 - More code simplifications, and I fixed the two features that I
+added yesterday so they appear to be fully functional.  The go to function
 finds the next word that matches, so you can use it to scroll through words
 that match.
 
-2/18/2009 - Add a couple of cool features, though they're not totally
+2/18/2009 - Added a couple of cool features, though they're not totally
 compatabile with the program yet (there are integration things to do), and I
 want to change the behavior of the Go To Word a little bit.  I added a go to
 feature, that will search either by number or by prefix, and a "review most
