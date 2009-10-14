@@ -88,7 +88,7 @@ public class CardReaderPanel extends JPanel
 	private Dimension normalSize = new Dimension(xSize,ySize);
 	private Dimension bigSize = new Dimension(750,440);
 	private String numReviewingString = "Reviewing Word: ";
-	private int maxStringLength = 85;
+	private int maxStringLength = 80;
 	private String cardListName;
 	private String errorMessage = "";
 	private Calendar calendar;
